@@ -1,9 +1,23 @@
 <script setup lang="ts">
-defineProps<{ content: string }>()
+import { parseMarkdown } from '@nuxtjs/mdc/runtime'
+import type { MDCParserResult } from '@nuxtjs/mdc'
+
+const props = defineProps<{ content: string }>()
+
+const parseMakddownResponse = ref<MDCParserResult>()
+watchEffect(async () => {
+  parseMakddownResponse.value = await parseMarkdown(props.content)
+})
 </script>
 
 <template>
-  <MDC :value="content" class="markdown-content" />
+  <!-- TODO: use MDC component in future. Currently in wrongly caching data inside v-for -->
+  <MDCRenderer
+    v-if="parseMakddownResponse"
+    :body="parseMakddownResponse.body"
+    :data="parseMakddownResponse.data"
+    class="markdown-content"
+  />
 </template>
 
 <style>

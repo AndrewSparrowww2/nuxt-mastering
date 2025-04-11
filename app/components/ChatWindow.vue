@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { IChatMessage, IChat } from '../types'
+import type { IChat } from '../types'
+import type { UIMessage } from '@ai-sdk/vue'
 
 const props = defineProps<{
-  messages: IChatMessage[]
+  messages: UIMessage[]
   chat: IChat
   typing: boolean
 }>()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { chat, messages, sendMessage, typing } = useChat()
+const { chat, messages, sendMessage, typing } = useChatStreams()
 
 useHead({
   title: chat.value.title

@@ -1,4 +1,4 @@
-import { generateText } from 'ai'
+import { generateText, streamText } from 'ai'
 import { createOpenAI } from '@ai-sdk/openai'
 import type { Message, LanguageModelV1 } from 'ai'
 import { prompts } from './prompt-service'
@@ -23,5 +23,19 @@ export async function generateChatResponse (
   })
 
   return response.text.trim()
+}
+
+export async function streamChatResponse (
+  model: LanguageModelV1,
+  messages: Message[],
+  system: string = prompts.default
+) {
+  const result = streamText({
+    model,
+    messages,
+    system
+  })
+
+  return result.toDataStreamResponse()
 }
 
