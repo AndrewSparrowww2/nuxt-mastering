@@ -11,7 +11,7 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <!-- TODO: use MDC component in future. Currently in wrongly caching data inside v-for -->
+  <!-- TODO: use <MDC/> component in future. Currently it wrongly caching data inside v-for -->
   <MDCRenderer
     v-if="parseMakddownResponse"
     :body="parseMakddownResponse.body"
