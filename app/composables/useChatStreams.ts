@@ -1,22 +1,29 @@
 import { useChat } from '@ai-sdk/vue'
-import type { IChat } from '../types'
-import { MOCK_CHAT } from './mockData'
 
-export default function useChatStreaming () {
-  const chat = ref<IChat>(MOCK_CHAT)
-  const { messages, append, status } = useChat({ api: '/api/ai-streams' })
+export default function useChatStreams (chatId: string) {
+  const { chats, updateChat } = useChatsStore()
+
+  const activeChat = computed(() => {
+    return chats.value.find((chat) => chat.id === chatId)
+  })
+
+  const { messages, append, status } = useChat({ id: chatId, api: '/api/ai-streams' })
   const typing = computed(() => ['submitted'].includes(status.value))
 
+  function sendMessage (message: string) {
+    append({
+      role: 'user',
+      content: message
+    })
+
+    updateChat({ id: chatId, updatedAt: new Date() })
+  }
+
   return {
-    chat,
+    chat: activeChat,
     messages,
     status,
     typing,
-    sendMessage: (message: string) => {
-      append({
-        role: 'user',
-        content: message
-      })
-    }
+    sendMessage
   }
 }

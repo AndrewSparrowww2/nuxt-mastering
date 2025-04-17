@@ -10,8 +10,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['send-message'])
 
-const { showScrollButton, scrollToBottom, pinToBottom } =
-  useChatScroll()
+const { showScrollButton, scrollToBottom, pinToBottom } = useChatScroll()
 
 function handleSendMessage (message: string) {
   emit('send-message', message)
@@ -33,7 +32,7 @@ watch(() => props.messages, pinToBottom, { deep: true })
       <template v-else>
         <div class="chat-header">
           <h1 class="title">
-            {{ messages[0]?.content }}
+            {{ chat.title }}
           </h1>
         </div>
         <div class="messages-container">
