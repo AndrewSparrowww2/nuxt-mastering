@@ -3,14 +3,14 @@ import type { IChat } from '../types'
 export default function useChatsStore () {
   const chats = useState<IChat[]>('chats', () => [])
 
-  function createChat () {
+  function createChat ({ projectId }: { projectId?: string } = {}) {
     const chat = {
       id: crypto.randomUUID(),
       title: `Chat ${chats.value.length + 1}`,
       messages: [],
-      projectId: '1',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
+      ...(projectId && { projectId })
     }
 
     chats.value.unshift(chat)
@@ -29,7 +29,7 @@ export default function useChatsStore () {
     }
   }
 
-  function getChatsInProject (projectId: string) {
+  function getChatsInProject (projectId?: string) {
     return chats.value.filter((c) => c.projectId === projectId)
   }
 

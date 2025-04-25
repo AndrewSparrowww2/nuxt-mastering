@@ -5,6 +5,7 @@
         icon="i-lucide-menu"
         color="primary"
         variant="soft"
+        @click="$emit('toggle-sidebar')"
       />
       <UButton icon="i-lucide-plus" to="/new-chat">
         New Chat
@@ -14,13 +15,16 @@
     <NuxtLink :to="{ name: 'index' }" class="text-lg font-semibold">
       {{ appConfig.title }}
     </NuxtLink>
-    <!--
-      <div class="header-right"></div>
-    -->
+
+    <NuxtLink :to="{ name: 'projects-projectId', params: { projectId: 1 } }" class="text-lg font-semibold">
+      Projects
+    </NuxtLink>
   </header>
 </template>
 
 <script setup lang="ts">
+defineEmits(['toggle-sidebar'])
+
 const appConfig = useAppConfig()
 </script>
 

@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/vue'
 
-export default function useChatStreams (chatId: string) {
+export default function useChatStreams (chatId?: string) {
   const { chats, updateChat } = useChatsStore()
 
   const activeChat = computed(() => {

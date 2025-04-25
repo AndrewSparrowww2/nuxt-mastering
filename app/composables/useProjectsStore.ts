@@ -1,6 +1,6 @@
 import type { IProject } from '../types'
 
-export default function useProjects (projectId?: string) {
+export default function useProjectsStore (projectId?: string) {
   const projects = useState<IProject[]>('projects', () => [
     {
       id: '1',
