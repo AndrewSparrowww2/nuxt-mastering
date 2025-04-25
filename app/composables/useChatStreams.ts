@@ -7,7 +7,7 @@ export default function useChatStreams (chatId?: string) {
     return chats.value.find((chat) => chat.id === chatId)
   })
 
-  const { messages, append, status } = useChat({ id: chatId, api: '/api/ai-streams' })
+  const { messages, append, status } = useChat({ id: chatId, api: '/api/ai-streams', initialMessages: activeChat.value?.messages || [] })
   const typing = computed(() => ['submitted'].includes(status.value))
 
   function sendMessage (message: string) {

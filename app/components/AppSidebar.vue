@@ -6,13 +6,14 @@ defineProps<{
   isOpen: boolean
 }>()
 
+const route = useRoute()
 const { getChatsInProject } = useChatsStore()
 
 function formatChatItem (chat: IChat): NavigationMenuItem {
   return {
     label: chat.title,
     to: { name: 'chats-id', params: { id: chat.id } },
-    active: useRoute().params.id === chat.id
+    active: route.params.id === chat.id
   }
 }
 
