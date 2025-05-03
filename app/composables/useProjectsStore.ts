@@ -1,5 +1,3 @@
-import type { IProject } from '../types'
-
 export default function useProjectsStore (projectId?: string) {
   const projects = useState<IProject[]>('projects', () => [
     {

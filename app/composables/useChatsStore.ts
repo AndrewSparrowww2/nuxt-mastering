@@ -1,10 +1,9 @@
-import type { IChat } from '../types'
-
 export default function useChatsStore () {
   const chats = useState<IChat[]>('chats', () => [{
     id: '1',
     title: 'Default chat',
     messages: [{ id: '1', role: 'user', content: 'Hello' }],
+    projectId: '1',
     createdAt: new Date(),
     updatedAt: new Date()
   }])

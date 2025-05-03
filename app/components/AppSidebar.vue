@@ -1,63 +1,117 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import type { IChat } from '../types'
 
 defineProps<{
   isOpen: boolean
 }>()
 
 const route = useRoute()
-const { getChatsInProject } = useChatsStore()
+const { getChatsInProject, createChat } = useChatsStore()
+const { projects, createProject } = useProjectsStore()
 
-function formatChatItem (chat: IChat): NavigationMenuItem {
+function formatProjectChat (
+  project: IProject,
+  chat: IChat
+): NavigationMenuItem {
   return {
-    label: chat.title,
-    to: { name: 'chats-id', params: { id: chat.id } },
+    label: chat.title || 'Untitled Chat',
+    to: `/projects/${project.id}/chats/${chat.id}`,
     active: route.params.id === chat.id
   }
 }
 
-const formattedChats = computed(() => {
-  return getChatsInProject().map(formatChatItem)
-})
+const chatsInCurrentProject = computed(() => getChatsInProject(route.params.projectId as string))
+
+function formatProjectItem (
+  project: IProject
+): NavigationMenuItem {
+  const isCurrent = route.params.projectId === project.id
+
+  const baseItem: NavigationMenuItem = {
+    label: project.name,
+    to: `/projects/${project.id}`,
+    active: isCurrent,
+    defaultOpen: isCurrent
+  }
+
+  if (isCurrent) {
+    return {
+      ...baseItem,
+      children: chatsInCurrentProject.value.map((chat) => formatProjectChat(project, chat))
+    }
+  }
+
+  return baseItem
+}
+
+const projectItems = computed<NavigationMenuItem[]>(() => projects.value?.map(formatProjectItem) || [])
+
+const chatsWIthoutProject = computed(() => getChatsInProject().map((c) => ({
+  label: c.title || 'Untitled Chat',
+  to: `/chats/${c.id}`,
+  active: route.params.id === c.id
+})))
+
+async function handleCreateProject () {
+  const newProject = await createProject()
+  const newChat = await createChat({ projectId: newProject.id })
+
+  navigateTo({ name: 'projects-projectId-chats-id', params: { projectId: newProject.id, id: newChat.id } })
+}
 </script>
 
 <template>
   <aside
-    class="fixed top-16 left-0 bottom-0 w-64
+    class="fixed top-16 left-0 bottom-0 w-64 p-4 overflow-y-auto
       transition-transform duration-300 z-40 bg-(--ui-bg-muted) border-r-(--ui-border) border-r"
     :class="{ '-translate-x-full': !isOpen }"
   >
-    <div class="overflow-y-auto p-4">
-      <div v-if="formattedChats.length" class="mb-4">
-        <div class="flex justify-between items-center mb-2">
-          <h2
-            class="text-sm font-semibold text-(--ui-text-muted)"
-          >
-            Generic Chats
-          </h2>
-        </div>
-
-        <UNavigationMenu
-          orientation="vertical"
-          class="w-full mb-4"
-          :items="formattedChats"
-        />
-      </div>
-
-      <template v-else>
-        <UAlert title="No chats" description="Create a new chat" color="neutral" variant="soft" />
-        <UButton
-          size="sm"
-          color="neutral"
-          variant="soft"
-          icon="i-heroicons-plus-small"
-          to="/new-chat"
-          class="mt-2 w-full"
-        >
-          New Chat
-        </UButton>
-      </template>
+    <div class="mb-4 pb-4 border-b border-(--ui-border)">
+      <h2 class="text-sm font-semibold text-(--ui-text-muted) mb-2">
+        Projects
+      </h2>
+      <UNavigationMenu
+        orientation="vertical"
+        class="w-full mb-2"
+        :items="projectItems"
+      />
+      <UButton
+        size="sm"
+        color="neutral"
+        variant="soft"
+        icon="i-heroicons-plus-small"
+        class="mt-2 w-full"
+        @click="handleCreateProject"
+      >
+        New Project
+      </UButton>
     </div>
+
+    <div v-if="chatsWIthoutProject.length">
+      <h2 class="text-sm font-semibold text-(--ui-text-muted) mb-2">
+        Generic Chats
+      </h2>
+
+      <UNavigationMenu
+        orientation="vertical"
+        class="w-full"
+        :items="chatsWIthoutProject"
+      />
+    </div>
+
+    <template v-else>
+      <UAlert title="No chats" description="Create a new chat" color="neutral" variant="soft" />
+      <UButton
+        size="sm"
+        color="neutral"
+        variant="soft"
+        icon="i-heroicons-plus-small"
+        class="mt-2 w-full"
+        to="/new-chat"
+      >
+        New Chat
+      </UButton>
+    </template>
   </aside>
 </template>
+

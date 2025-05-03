@@ -1,10 +1,10 @@
-export interface IChatMessage {
+interface IChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
 }
 
-export interface IChat {
+interface IChat {
   id: string
   title: string
   messages: IChatMessage[]
@@ -13,7 +13,7 @@ export interface IChat {
   updatedAt: Date
 }
 
-export interface IProject {
+interface IProject {
   id: string
   name: string
 }
