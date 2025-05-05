@@ -2,6 +2,8 @@ interface IChatMessage {
   id: string
   role: 'user' | 'assistant'
   content: string
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface IChat {
@@ -16,4 +18,10 @@ interface IChat {
 interface IProject {
   id: string
   name: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+interface IChatWithProject extends IChat {
+  project: IProject | null
 }

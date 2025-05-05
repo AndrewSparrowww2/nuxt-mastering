@@ -1,23 +1,17 @@
 export default function useChatsStore () {
-  const chats = useState<IChat[]>('chats', () => [{
-    id: '1',
-    title: 'Default chat',
-    messages: [{ id: '1', role: 'user', content: 'Hello' }],
-    projectId: '1',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  }])
+  const chats = useState<IChat[]>('chats', () => [
+    useMocks().generateChat({
+      title: 'Default chat',
+      messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date(), updatedAt: new Date() }],
+      projectId: '1'
+    })
+  ])
 
   function createChat ({ projectId }: { projectId?: string } = {}) {
-    const chat = {
-      id: crypto.randomUUID(),
+    const chat = useMocks().generateChat({
       title: `Chat ${chats.value.length + 1}`,
-      messages: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
       ...(projectId && { projectId })
-    }
-
+    })
     chats.value.unshift(chat)
 
     return chat

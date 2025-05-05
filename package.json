@@ -5,6 +5,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "typecheck": "nuxt typecheck",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
@@ -13,7 +14,7 @@
     "@ai-sdk/openai": "1.2.0",
     "@ai-sdk/vue": "1.2.0",
     "@nuxt/eslint": "1.2.0",
-    "@nuxt/ui": "^3.0.1",
+    "@nuxt/ui": "^3.1.1",
     "ai": "4.1.51",
     "eslint": "^9.0.0",
     "nuxt": "^3.16.1",

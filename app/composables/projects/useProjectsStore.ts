@@ -1,9 +1,8 @@
+import { useMocks } from '~~/shared/utils/useMocks'
+
 export default function useProjectsStore (projectId?: string) {
   const projects = useState<IProject[]>('projects', () => [
-    {
-      id: '1',
-      name: 'Project 1'
-    }
+    useMocks().generateProject({ id: '1', name: 'Project 1' })
   ])
 
   const activeProject = computed(() => {
@@ -11,13 +10,7 @@ export default function useProjectsStore (projectId?: string) {
   })
 
   function createProject () {
-    const id = crypto.randomUUID()
-
-    const project = {
-      id,
-      name: `New project: ${id.slice(0, 8)}`
-    }
-
+    const project = useMocks().generateProject()
     projects.value.push(project)
 
     return project

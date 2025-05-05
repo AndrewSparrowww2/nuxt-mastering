@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { IChat } from '../types'
 import type { UIMessage } from '@ai-sdk/vue'
 
 const props = defineProps<{

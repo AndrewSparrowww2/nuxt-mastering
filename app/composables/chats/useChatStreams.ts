@@ -10,6 +10,10 @@ export default function useChatStreams (chatId?: string) {
   const { messages, append, status } = useChat({ id: chatId, api: '/api/ai-streams', initialMessages: activeChat.value?.messages || [] })
   const typing = computed(() => ['submitted'].includes(status.value))
 
+  watch(() => messages.value, (newVal) => {
+    console.log(newVal)
+  })
+
   function sendMessage (message: string) {
     append({
       role: 'user',

@@ -8,6 +8,10 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
+  imports: {
+    dirs: ['composables/**']
+  },
+
   runtimeConfig: {
     openaiApiKey: process.env.NUXT_OPENAI_API_KEY,
     openaiProjectId: process.env.NUXT_OPENAI_PROJECT_ID,

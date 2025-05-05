@@ -19,8 +19,6 @@
 </template>
 
 <script setup lang="ts">
-import type { IChat } from '~/types'
-
 const props = defineProps<{
   chat: IChat
   projectId: string
