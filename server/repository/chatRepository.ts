@@ -29,7 +29,7 @@ export async function getAllChats (): Promise<IChat[]> {
 
 export async function createChat (data: { title?: string; projectId?: string } = {}): Promise<IChatWithProject | null> {
   const newChat: IChat = useMocks().generateChat({
-    title: `Chat ${chats.length + 1}`,
+    title: data.title || `Chat ${chats.length + 1}`,
     ...(data.projectId && { projectId: data.projectId })
   })
   chats.unshift(newChat)

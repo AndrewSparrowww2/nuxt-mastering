@@ -4,8 +4,7 @@ import { getMessagesByChatId, createMessageForChat } from '~~/server/repository/
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
-  const body = await readBody(event)
-  const { messages }: { messages: UIMessage[] } = body
+  const { messages }: { messages: UIMessage[] } = await readBody(event)
   const newMessage = messages.at(-1)
 
   // Create new user message in DB

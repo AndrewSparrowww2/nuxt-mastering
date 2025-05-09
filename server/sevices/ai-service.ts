@@ -32,14 +32,12 @@ interface IStreamChatArguments {
   onFinish?: StreamTextOnFinishCallback<ToolSet>
 }
 
-export async function streamChatResponse (
-  {
-    model,
-    messages,
-    system = prompts.default,
-    onFinish = () => {}
-  }: IStreamChatArguments
-) {
+export async function streamChatResponse ({
+  model,
+  messages,
+  system = prompts.default,
+  onFinish = () => {}
+}: IStreamChatArguments) {
   const result = streamText({
     model,
     messages,
