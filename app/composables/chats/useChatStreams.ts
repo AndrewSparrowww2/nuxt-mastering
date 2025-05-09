@@ -7,19 +7,17 @@ export default function useChatStreams (chatId?: string) {
     return chats.value.find((chat) => chat.id === chatId)
   })
 
-  const { messages, append, status } = useChat({ id: chatId, api: '/api/ai-streams', initialMessages: activeChat.value?.messages || [] })
+  const { messages, append, status } = useChat(
+    {
+      id: chatId,
+      api: `/api/chats/${chatId}/messages/generate`,
+      initialMessages: activeChat.value?.messages || []
+    }
+  )
   const typing = computed(() => ['submitted'].includes(status.value))
 
-  watch(() => messages.value, (newVal) => {
-    console.log(newVal)
-  })
-
   function sendMessage (message: string) {
-    append({
-      role: 'user',
-      content: message
-    })
-
+    append({ role: 'user', content: message })
     updateChat({ id: chatId, updatedAt: new Date() })
   }
 

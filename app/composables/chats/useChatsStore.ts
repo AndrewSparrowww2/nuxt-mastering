@@ -1,6 +1,7 @@
 export default function useChatsStore () {
   const chats = useState<IChat[]>('chats', () => [
     useMocks().generateChat({
+      id: '1',
       title: 'Default chat',
       messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date(), updatedAt: new Date() }],
       projectId: '1'

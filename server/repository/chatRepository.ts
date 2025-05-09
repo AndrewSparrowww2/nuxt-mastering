@@ -2,6 +2,7 @@ import { getProjectById } from './projectRepository'
 
 const chats: IChat[] = [
   useMocks().generateChat({
+    id: '1',
     title: 'Default chat',
     messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date(), updatedAt: new Date() }],
     projectId: '1'
@@ -26,7 +27,7 @@ export async function getAllChats (): Promise<IChat[]> {
     )
 }
 
-export async function createChat (data: { title?: string; projectId?: string }): Promise<IChatWithProject | null> {
+export async function createChat (data: { title?: string; projectId?: string } = {}): Promise<IChatWithProject | null> {
   const newChat: IChat = useMocks().generateChat({
     title: `Chat ${chats.length + 1}`,
     ...(data.projectId && { projectId: data.projectId })

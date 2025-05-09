@@ -1,6 +1,6 @@
 interface IChatMessage {
   id: string
-  role: 'user' | 'assistant'
+  role: 'data' | 'system' | 'user' | 'assistant'
   content: string
   createdAt: Date
   updatedAt: Date
