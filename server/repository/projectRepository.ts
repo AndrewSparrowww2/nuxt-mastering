@@ -1,23 +1,26 @@
-const projects: IProject[] = [
-  useMocks().generateProject({ id: '1', name: 'Project 1' })
-]
+const dataStorage = useStorage('data')
 
-export function getAllProjects (): IProject[] {
+export async function getAllProjects (): Promise<IProject[]> {
+  const projects = await dataStorage.getItem<IProject[]>('projects') || []
   return [...projects].sort((a, b) => a.name.localeCompare(b.name))
 }
 
-export function getProjectById (id: string): IProject | null {
+export async function getProjectById (id: string): Promise<IProject | null> {
+  const projects = await dataStorage.getItem<IProject[]>('projects') || []
   return projects.find((p) => p.id === id) || null
 }
 
 export async function createProject (data: { name?: string } = {}): Promise<IProject> {
+  const projects = await dataStorage.getItem<IProject[]>('projects') || []
   const newProject = useMocks().generateProject({ ...(data.name && { name: data.name }) })
   projects.push(newProject)
+  await dataStorage.setItem('projects', projects)
 
   return newProject
 }
 
 export async function updateProject (id: string, data: { name?: string } = {}): Promise<IProject | null> {
+  const projects = await dataStorage.getItem<IProject[]>('projects') || []
   const projectIndex = projects.findIndex((p) => p.id === id)
   if (projectIndex === -1) return null
 
@@ -30,15 +33,18 @@ export async function updateProject (id: string, data: { name?: string } = {}): 
     updatedAt: new Date()
   }
   projects[projectIndex] = updatedProject
+  await dataStorage.setItem('projects', projects)
 
   return updatedProject
 }
 
 export async function deleteProject (id: string): Promise<boolean> {
+  const projects = await dataStorage.getItem<IProject[]>('projects') || []
   const index = projects.findIndex((project) => project.id === id)
 
   if (index !== -1) {
     projects.splice(index, 1)
+    await dataStorage.setItem('projects', projects)
     return true
   }
 

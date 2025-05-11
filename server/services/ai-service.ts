@@ -11,14 +11,14 @@ export function createOpenAIModel () {
   return provider('gpt-4o-mini')
 }
 
-export async function generateChatResponse (
+export async function generateTextResponse (
   model: LanguageModelV1,
-  messages: Message[],
+  prompt: string,
   system: string = prompts.default
 ) {
   const response = await generateText({
     model,
-    messages,
+    prompt,
     system
   })
 

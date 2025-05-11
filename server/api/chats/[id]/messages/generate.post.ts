@@ -1,4 +1,4 @@
-import { streamChatResponse, createOpenAIModel } from '~~/server/sevices/ai-service'
+import { streamChatResponse, createOpenAIModel } from '~~/server/services/ai-service'
 import type { UIMessage } from 'ai'
 import { getMessagesByChatId, createMessageForChat } from '~~/server/repository/chatRepository'
 
@@ -9,10 +9,10 @@ export default defineEventHandler(async (event) => {
 
   // Create new user message in DB
   if (newMessage) {
-    createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
+    await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
   }
 
-  const savedMessages = getMessagesByChatId(id)
+  const savedMessages = await getMessagesByChatId(id)
 
   return streamChatResponse({
     model: createOpenAIModel(),
