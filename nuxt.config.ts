@@ -24,6 +24,21 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '~/modules/extend-routes.ts'],
 
+  nitro: {
+    storage: {
+      data: {
+        driver: 'netlify-blobs',
+        name: 'av-nuxt-chat'
+      }
+    },
+    devStorage: {
+      data: {
+        driver: 'fs-lite',
+        base: './.data/kv'
+      }
+    }
+  },
+
   mdc: {
     highlight: {
       theme: 'material-theme-palenight',

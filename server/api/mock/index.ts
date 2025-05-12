@@ -10,7 +10,6 @@ export default defineEventHandler(async (_event) => {
 
   await dataStorage.setItem('chats', chats)
   await dataStorage.setItem('projects', projects)
-  await dataStorage.setItem('test:foo', { hello: 'world' })
 
   const result = await Promise.all([
     dataStorage.getItem('chats'),
