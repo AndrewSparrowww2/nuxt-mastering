@@ -2,7 +2,7 @@ export function useMocks () {
   function generateProject (project: Partial<IProject> = {}): IProject {
     return {
       id: crypto.randomUUID(),
-      name: `New project: ${crypto.randomUUID().slice(0, 8)}`,
+      name: `New project: ${crypto.randomUUID().slice(0, 4)}`,
       createdAt: new Date(),
       updatedAt: new Date(),
       ...project

@@ -12,7 +12,7 @@ async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject
     }
   }))
 
-  return chatsWithProject.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+  return chatsWithProject.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 }
 
 export async function getAllChats (): Promise<IChatWithProject[]> {

@@ -23,5 +23,5 @@ interface IProject {
 }
 
 interface IChatWithProject extends IChat {
-  project: IProject | null
+  project?: IProject | null
 }

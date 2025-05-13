@@ -1,12 +1,13 @@
 export default function useChatsStore () {
-  const chats = useState<IChat[]>('chats', () => [
-    useMocks().generateChat({
-      id: '1',
-      title: 'Default chat',
-      messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date(), updatedAt: new Date() }],
-      projectId: '1'
-    })
-  ])
+  const { data: chats, execute, status } = useAsyncData<IChat[]>('chats', () => $fetch('/api/chats'), {
+    immediate: false,
+    default: () => []
+  })
+
+  async function fetchChats () {
+    if (status.value !== 'idle') return
+    await execute()
+  }
 
   function createChat ({ projectId }: { projectId?: string } = {}) {
     const chat = useMocks().generateChat({
@@ -35,6 +36,7 @@ export default function useChatsStore () {
 
   return {
     chats,
+    fetchChats,
     createChat,
     updateChat,
     getChatsInProject

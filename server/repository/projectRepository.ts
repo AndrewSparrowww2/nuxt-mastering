@@ -2,7 +2,7 @@ const dataStorage = useStorage('data')
 
 export async function getAllProjects (): Promise<IProject[]> {
   const projects = await dataStorage.getItem<IProject[]>('projects') || []
-  return [...projects].sort((a, b) => a.name.localeCompare(b.name))
+  return projects.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 }
 
 export async function getProjectById (id: string): Promise<IProject | null> {
@@ -19,7 +19,7 @@ export async function createProject (data: { name?: string } = {}): Promise<IPro
   return newProject
 }
 
-export async function updateProject (id: string, data: { name?: string } = {}): Promise<IProject | null> {
+export async function updateProject (id: string, data: { name: string }): Promise<IProject | null> {
   const projects = await dataStorage.getItem<IProject[]>('projects') || []
   const projectIndex = projects.findIndex((p) => p.id === id)
   if (projectIndex === -1) return null
@@ -29,7 +29,7 @@ export async function updateProject (id: string, data: { name?: string } = {}): 
 
   const updatedProject: IProject = {
     ...project,
-    ...(data.name && { name: data.name }),
+    name: data.name,
     updatedAt: new Date()
   }
   projects[projectIndex] = updatedProject
