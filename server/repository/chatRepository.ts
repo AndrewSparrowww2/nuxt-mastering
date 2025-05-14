@@ -119,6 +119,7 @@ export async function createMessageForChat (data: {
 
   chat.messages.push(newMessage)
   chat.updatedAt = new Date()
+  console.log('createMessageForChat', newMessage, chat.messages)
   await dataStorage.setItem('chats', chats)
   return newMessage
 }

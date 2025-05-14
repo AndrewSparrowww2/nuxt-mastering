@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const savedMessages = await getMessagesByChatId(id)
+  console.log('In generatePost', newMessage, savedMessages)
 
   return streamChatResponse({
     model: createOpenAIModel(),
