@@ -1,6 +1,7 @@
 export default function useChatsStore () {
   const { data: chats, execute, status } = useAsyncData<IChat[]>('chats', () => $fetch('/api/chats'), {
     immediate: false,
+    deep: true,
     default: () => []
   })
 
@@ -9,25 +10,35 @@ export default function useChatsStore () {
     await execute()
   }
 
-  function createChat ({ projectId }: { projectId?: string } = {}) {
-    const chat = useMocks().generateChat({
-      title: `Chat ${chats.value.length + 1}`,
-      ...(projectId && { projectId })
+  async function createChat ({ projectId }: { projectId?: string } = {}) {
+    const chat = await $fetch<IChat>('/api/chats', {
+      method: 'POST',
+      body: {
+        title: `Chat ${chats.value.length + 1}`,
+        ...(projectId && { projectId })
+      }
     })
-    chats.value.unshift(chat)
 
+    chats.value.unshift(chat)
     return chat
   }
 
-  function updateChat (updatedChat: Partial<IChat>) {
-    const index = chats.value.findIndex((c) => c.id === updatedChat.id)
+  async function updateChat (id: string, messages: IChatMessage[]) {
+    const index = chats.value.findIndex((c) => c.id === id)
+    if (!chats.value[index]) return
 
-    if (chats.value[index]) {
-      chats.value[index] = {
-        ...chats.value[index],
-        ...updatedChat
-      }
+    const updatedChat = { ...chats.value[index], messages }
+
+    // Generate new title for chat using AI
+    if (messages.length === 1) {
+      const newChat = await $fetch<IChat>(`/api/chats/${id}/title/generate`, {
+        method: 'POST',
+        body: { message: messages[0]?.content }
+      })
+      updatedChat.title = newChat.title
     }
+
+    chats.value[index] = updatedChat
   }
 
   function getChatsInProject (projectId?: string) {

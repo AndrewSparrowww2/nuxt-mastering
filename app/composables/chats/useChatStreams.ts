@@ -1,30 +1,45 @@
 import { useChat } from '@ai-sdk/vue'
 
-export default function useChatStreams (chatId?: string) {
-  const { chats, updateChat } = useChatsStore()
+export default function useChatStreams (chatId: string) {
+  const { updateChat, chats } = useChatsStore()
 
-  const activeChat = computed(() => {
-    return chats.value.find((chat) => chat.id === chatId)
-  })
+  const { data: chat, execute, status: fetchStatus } = useAsyncData<IChat>(
+    `chats/${chatId}`,
+    () => $fetch(`/api/chats/${chatId}`),
+    {
+      immediate: false,
+      deep: true
+    })
 
-  const { messages, append, status } = useChat(
+  const activeChat = computed(() => chats.value.find(c => c.id === chatId))
+
+  async function fetchChat () {
+    if (fetchStatus.value !== 'idle') return
+    await execute()
+    setMessages(chat.value?.messages || [])
+  }
+
+  const { messages, append, status: chatStatus, setMessages } = useChat(
     {
       id: chatId,
       api: `/api/chats/${chatId}/messages/generate`,
-      initialMessages: activeChat.value?.messages || []
+      initialMessages: chat.value?.messages || []
     }
   )
-  const typing = computed(() => ['submitted'].includes(status.value))
+  const typing = computed(() => ['submitted'].includes(chatStatus.value))
 
-  function sendMessage (message: string) {
+  async function sendMessage (message: string) {
     append({ role: 'user', content: message })
-    updateChat({ id: chatId, updatedAt: new Date() })
+    await nextTick()
+
+    updateChat(chatId, messages.value)
   }
 
   return {
     chat: activeChat,
+    fetchChat,
     messages,
-    status,
+    status: chatStatus,
     typing,
     sendMessage
   }

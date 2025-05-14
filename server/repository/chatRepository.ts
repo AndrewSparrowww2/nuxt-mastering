@@ -12,7 +12,7 @@ async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject
     }
   }))
 
-  return chatsWithProject.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+  return chatsWithProject.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 }
 
 export async function getAllChats (): Promise<IChatWithProject[]> {
@@ -100,7 +100,7 @@ export async function getMessagesByChatId (chatId: string): Promise<IChatMessage
   const chat = chats.find((c) => c.id === chatId)
   if (!chat) return []
 
-  return [...chat.messages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+  return chat.messages
 }
 
 export async function createMessageForChat (data: {
@@ -136,5 +136,5 @@ export async function deleteMessagesForChat (chatId: string) {
 
 export function getLastMessageForChat (chat: IChat): IChatMessage | null {
   if (!chat || chat.messages.length === 0) return null
-  return chat.messages.reduce((latest, msg) => new Date(msg.createdAt) > new Date(latest.createdAt) ? msg : latest)
+  return chat.messages.at(-1)!
 }
