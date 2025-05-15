@@ -26,7 +26,6 @@ export function useMocks () {
       role: 'user',
       content: 'Hello',
       createdAt: new Date(),
-      updatedAt: new Date(),
       ...message
     }
   }

@@ -107,20 +107,23 @@ export async function createMessageForChat (data: {
   content: string
   role: IChatMessage['role']
   chatId: string
-}): Promise<IChatMessage | null> {
+  previousResponseId?: TJSONValue
+}): Promise<{ message: IChatMessage; previousResponseId?: TJSONValue } | null> {
   const chats = await dataStorage.getItem<IChat[]>('chats') || []
   const chat = chats.find((c) => c.id === data.chatId)
   if (!chat) return null
 
-  const newMessage: IChatMessage = useMocks().generateChatMessage({
+  const message: IChatMessage = useMocks().generateChatMessage({
     content: data.content,
     role: data.role
   })
 
-  chat.messages.push(newMessage)
+  chat.messages.push(message)
   chat.updatedAt = new Date()
+  if (data.role === 'assistant') chat.previousResponseId = data.previousResponseId
+
   await dataStorage.setItem('chats', chats)
-  return newMessage
+  return { message, previousResponseId: chat.previousResponseId }
 }
 
 export async function deleteMessagesForChat (chatId: string) {

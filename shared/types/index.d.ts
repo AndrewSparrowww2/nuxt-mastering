@@ -10,6 +10,7 @@ interface IChat {
   title: string
   messages: IChatMessage[]
   projectId?: string
+  previousResponseId?: import('ai').JSONValue
   createdAt: Date
   updatedAt: Date
 }
@@ -24,3 +25,7 @@ interface IProject {
 interface IChatWithProject extends IChat {
   project?: IProject | null
 }
+
+type TJSONValue = string | number | boolean | {
+  [value: string]: TJSONValue
+} | TJSONValue[] | null

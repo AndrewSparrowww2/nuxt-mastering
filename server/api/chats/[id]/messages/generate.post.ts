@@ -5,19 +5,28 @@ import { createMessageForChat } from '~~/server/repository/chatRepository'
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
   const { messages }: { messages: UIMessage[] } = await readBody(event)
-  const newMessage = messages.at(-1)
+  const newMessage = messages.at(-1) as UIMessage
+  let previousResponseId
 
   // Create new user message in DB
   if (newMessage) {
-    await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
+    const result = await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
+    previousResponseId = result?.previousResponseId
   }
 
+  const provider = createOpenAIModel()
   return streamChatResponse({
-    model: createOpenAIModel(),
-    messages: messages,
+    model: provider.model,
+    messages: [newMessage],
+    providerOptions: { [provider.name]: { ...(previousResponseId && { previousResponseId }) } },
     onFinish: async (event) => {
       // Create new assistant message in DB after streaming from AI
-      await createMessageForChat({ content: event.text, role: 'assistant', chatId: id })
+      await createMessageForChat({
+        content: event.text,
+        role: 'assistant',
+        chatId: id,
+        previousResponseId: event.providerMetadata?.openai?.responseId
+      })
     }
   })
 })

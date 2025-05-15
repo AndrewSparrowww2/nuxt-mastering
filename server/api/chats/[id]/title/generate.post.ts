@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
   const { message }: { message: string } = await readBody(event)
 
-  const generatedTitle = await generateTextResponse(createOpenAIModel(), message, prompts.chatTitle)
+  const generatedTitle = await generateTextResponse(createOpenAIModel().model, message, prompts.chatTitle)
 
   return updateChat(id, { title: generatedTitle })
 })

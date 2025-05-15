@@ -1,14 +1,19 @@
 import { generateText, streamText } from 'ai'
 import { createOpenAI, openai } from '@ai-sdk/openai'
-import type { Message, LanguageModelV1, StreamTextOnFinishCallback, ToolSet } from 'ai'
+import type { Message, LanguageModelV1, StreamTextOnFinishCallback, ToolSet, ProviderMetadata } from 'ai'
 import { prompts } from './prompt-service'
 
-export function createOpenAIModel () {
+interface IModelProvider {
+  model: LanguageModelV1
+  name: string
+}
+
+export function createOpenAIModel (): IModelProvider {
   const provider = createOpenAI({
     apiKey: useRuntimeConfig().openaiApiKey
   })
 
-  return provider.responses('gpt-4o-mini')
+  return { model: provider.responses('gpt-4o-mini'), name: 'openai' }
 }
 
 export async function generateTextResponse (
@@ -30,20 +35,26 @@ interface IStreamChatArguments {
   messages: Message[]
   system?: string
   onFinish?: StreamTextOnFinishCallback<ToolSet>
+  providerOptions?: ProviderMetadata
 }
 
 export async function streamChatResponse ({
   model,
   messages,
   system = prompts.default,
-  onFinish = () => {}
+  onFinish = () => {},
+  providerOptions = {}
 }: IStreamChatArguments) {
   const result = streamText({
     model,
     messages,
     system,
+    providerOptions,
     tools: {
       web_search_preview: openai.tools.webSearchPreview()
+    },
+    onError: (error) => {
+      console.error('Error streaming chat response:', error)
     },
     onFinish
   })
