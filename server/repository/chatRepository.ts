@@ -100,7 +100,7 @@ export async function getMessagesByChatId (chatId: string): Promise<IChatMessage
   const chat = chats.find((c) => c.id === chatId)
   if (!chat) return []
 
-  return chat.messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  return chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 }
 
 export async function createMessageForChat (data: {

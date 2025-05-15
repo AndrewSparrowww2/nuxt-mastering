@@ -1,5 +1,5 @@
 import { generateText, streamText } from 'ai'
-import { createOpenAI } from '@ai-sdk/openai'
+import { createOpenAI, openai } from '@ai-sdk/openai'
 import type { Message, LanguageModelV1, StreamTextOnFinishCallback, ToolSet } from 'ai'
 import { prompts } from './prompt-service'
 
@@ -8,7 +8,7 @@ export function createOpenAIModel () {
     apiKey: useRuntimeConfig().openaiApiKey
   })
 
-  return provider('gpt-4o-mini')
+  return provider.responses('gpt-4o-mini')
 }
 
 export async function generateTextResponse (
@@ -42,6 +42,9 @@ export async function streamChatResponse ({
     model,
     messages,
     system,
+    tools: {
+      web_search_preview: openai.tools.webSearchPreview()
+    },
     onFinish
   })
 
