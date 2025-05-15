@@ -100,8 +100,6 @@ export async function getMessagesByChatId (chatId: string): Promise<IChatMessage
   const chat = chats.find((c) => c.id === chatId)
   if (!chat) return []
 
-  console.log('getMessagesByChatId', chat.messages)
-
   return chat.messages
 }
 
@@ -121,7 +119,6 @@ export async function createMessageForChat (data: {
 
   chat.messages.push(newMessage)
   chat.updatedAt = new Date()
-  console.log('createMessageForChat', newMessage, chat.messages)
   await dataStorage.setItem('chats', chats)
   return newMessage
 }

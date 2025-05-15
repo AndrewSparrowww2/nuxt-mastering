@@ -1,6 +1,6 @@
-import { streamChatResponse, createOpenAIModel } from '~~/server/services/ai-service'
 import type { UIMessage } from 'ai'
-import { getMessagesByChatId, createMessageForChat } from '~~/server/repository/chatRepository'
+import { streamChatResponse, createOpenAIModel } from '~~/server/services/ai-service'
+import { createMessageForChat } from '~~/server/repository/chatRepository'
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
@@ -12,15 +12,12 @@ export default defineEventHandler(async (event) => {
     await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
   }
 
-  const savedMessages = await getMessagesByChatId(id)
-  console.log('In generatePost', newMessage, savedMessages)
-
   return streamChatResponse({
     model: createOpenAIModel(),
-    messages: savedMessages,
-    onFinish: (event) => {
+    messages: messages,
+    onFinish: async (event) => {
       // Create new assistant message in DB after streaming from AI
-      createMessageForChat({ content: event.text, role: 'assistant', chatId: id })
+      await createMessageForChat({ content: event.text, role: 'assistant', chatId: id })
     }
   })
 })

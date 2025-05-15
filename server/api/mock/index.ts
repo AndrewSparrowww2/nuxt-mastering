@@ -3,7 +3,7 @@ export default defineEventHandler(async (_event) => {
   const chats = [useMocks().generateChat({
     id: '1',
     title: 'Default chat',
-    messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date(), updatedAt: new Date() }],
+    messages: [{ id: '1', role: 'user', content: 'Hello', createdAt: new Date() }],
     projectId: '1'
   })]
   const projects = [useMocks().generateProject({ id: '1', name: 'Project 1' })]

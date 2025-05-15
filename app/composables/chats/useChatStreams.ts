@@ -1,7 +1,7 @@
 import { useChat } from '@ai-sdk/vue'
 
 export default function useChatStreams (chatId: string) {
-  const { updateChat, chats } = useChatsStore()
+  const { chats, updateChat } = useChatsStore()
 
   const { data: chat, execute, status: fetchStatus } = useAsyncData<IChat>(
     `chats/${chatId}`,
@@ -31,7 +31,6 @@ export default function useChatStreams (chatId: string) {
   async function sendMessage (message: string) {
     append({ role: 'user', content: message })
     await nextTick()
-
     updateChat(chatId, messages.value)
   }
 

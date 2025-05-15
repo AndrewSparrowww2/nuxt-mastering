@@ -27,8 +27,7 @@ export default defineNuxtConfig({
   nitro: {
     storage: {
       data: {
-        driver: 'netlify-blobs',
-        name: 'av-nuxt-chat'
+        driver: 'memory'
       }
     },
     devStorage: {
