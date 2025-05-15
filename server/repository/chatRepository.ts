@@ -100,6 +100,8 @@ export async function getMessagesByChatId (chatId: string): Promise<IChatMessage
   const chat = chats.find((c) => c.id === chatId)
   if (!chat) return []
 
+  console.log('getMessagesByChatId', chat.messages)
+
   return chat.messages
 }
 

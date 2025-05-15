@@ -7,5 +7,8 @@ export default defineEventHandler(async (event) => {
   const { message }: { message: string } = await readBody(event)
 
   const generatedTitle = await generateTextResponse(createOpenAIModel(), message, prompts.chatTitle)
+
+  console.log('Generated title before update chat', generatedTitle)
+
   return updateChat(id, { title: generatedTitle })
 })
