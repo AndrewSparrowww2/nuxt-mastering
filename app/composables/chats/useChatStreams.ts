@@ -31,7 +31,8 @@ export default function useChatStreams (chatId: string) {
   async function sendMessage (message: string) {
     append({ role: 'user', content: message })
     await nextTick()
-    updateChat(chatId, messages.value)
+
+    updateChat(chatId, messages.value.map(m => ({ ...m, createdAt: m.createdAt || new Date() })))
   }
 
   return {

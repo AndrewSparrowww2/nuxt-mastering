@@ -2,7 +2,7 @@ interface IChatMessage {
   id: string
   role: 'data' | 'system' | 'user' | 'assistant'
   content: string
-  createdAt?: Date
+  createdAt: Date
 }
 
 interface IChat {
