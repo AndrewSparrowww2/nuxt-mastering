@@ -2,14 +2,9 @@ import { useChat } from '@ai-sdk/vue'
 
 export default function useChatStreams (chatId: string) {
   const { chats, updateChat } = useChatsStore()
-
-  const { data: chat, execute, status: fetchStatus } = useAsyncData<IChat>(
-    `chats/${chatId}`,
-    () => $fetch(`/api/chats/${chatId}`),
-    {
-      immediate: false,
-      deep: true
-    })
+  const { data: chat, execute, status: fetchStatus } = useFetch<IChat>(`/api/chats/${chatId}`, {
+    immediate: false
+  })
 
   const activeChat = computed(() => chats.value.find(c => c.id === chatId))
 

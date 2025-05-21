@@ -1,13 +1,14 @@
 export default function useProjectsStore (projectId?: string) {
-  const { data: projects, execute, status } = useAsyncData<IProject[]>('projects', () => $fetch('/api/projects'), {
+  const projects = useState<IProject[]>('projects', () => [])
+  const { data, execute, status } = useFetch<IProject[]>('/api/projects', {
     immediate: false,
-    deep: true,
     default: () => []
   })
 
   async function fetchProjects () {
     if (status.value !== 'idle') return
     await execute()
+    projects.value = data.value
   }
 
   const activeProject = computed(() => {
