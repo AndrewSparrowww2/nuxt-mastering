@@ -27,6 +27,5 @@ const isSidebarOpen = ref(true)
 
 .main-content {
   height: 100%;
-  margin-top: 4rem;
 }
 </style>

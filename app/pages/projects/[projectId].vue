@@ -121,14 +121,15 @@ async function handleNewChat () {
 <style scoped>
 .container {
   padding: 1rem;
-  height: calc(100% - 4rem); /* Account for AppHeader */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--ui-border);
 }
