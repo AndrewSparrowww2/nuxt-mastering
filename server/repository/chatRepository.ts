@@ -1,6 +1,14 @@
 import { getProjectById } from './projectRepository'
 const dataStorage = useStorage('data')
 
+async function getChats () {
+  return await dataStorage.getItem<IChat[]>('chats') || []
+}
+
+async function saveChats (chats: IChat[]) {
+  await dataStorage.setItem('chats', chats)
+}
+
 async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject[]> {
   const chatsWithProject = await Promise.all(chats.map(async (chat) => {
     const lastMessage = getLastMessageForChat(chat)
@@ -16,17 +24,17 @@ async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject
 }
 
 export async function getAllChats (): Promise<IChatWithProject[]> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   return await parseChatsListResponse(chats)
 }
 
 export async function getChatsInProject (projectId: string): Promise<IChatWithProject[]> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   return await parseChatsListResponse(chats.filter(chat => chat.projectId === projectId))
 }
 
 export async function createChat (data: { title?: string; projectId?: string } = {}): Promise<IChatWithProject | null> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
 
   const newChat: IChat = useMocks().generateChat({
     title: data.title || `Chat ${chats.length + 1}`,
@@ -45,7 +53,7 @@ export async function createChat (data: { title?: string; projectId?: string } =
 }
 
 export async function getChatById (id: string): Promise<IChatWithProject | null> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const chat = chats.find((c) => c.id === id)
   if (!chat) return null
 
@@ -58,7 +66,7 @@ export async function getChatById (id: string): Promise<IChatWithProject | null>
 }
 
 export async function updateChat (id: string, data: { title: string }): Promise<IChatWithProject | null> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const chatIndex = chats.findIndex((c) => c.id === id)
   if (chatIndex === -1) return null
 
@@ -71,7 +79,7 @@ export async function updateChat (id: string, data: { title: string }): Promise<
     updatedAt: new Date()
   }
   chats[chatIndex] = updatedChat
-  await dataStorage.setItem('chats', chats)
+  await saveChats(chats)
 
   const project = updatedChat.projectId ? await getProjectById(updatedChat.projectId) : null
   return {
@@ -82,13 +90,13 @@ export async function updateChat (id: string, data: { title: string }): Promise<
 }
 
 export async function deleteChat (id: string): Promise<boolean> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const index = chats.findIndex((chat) => chat.id === id)
 
   if (index !== -1) {
     chats.splice(index, 1)
     await deleteMessagesForChat(id)
-    await dataStorage.setItem('chats', chats)
+    await saveChats(chats)
 
     return true
   }
@@ -96,7 +104,7 @@ export async function deleteChat (id: string): Promise<boolean> {
 }
 
 export async function getMessagesByChatId (chatId: string): Promise<IChatMessage[]> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const chat = chats.find((c) => c.id === chatId)
   if (!chat) return []
 
@@ -109,7 +117,7 @@ export async function createMessageForChat (data: {
   chatId: string
   previousResponseId?: TJSONValue
 }): Promise<{ message: IChatMessage; previousResponseId?: TJSONValue } | null> {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const chat = chats.find((c) => c.id === data.chatId)
   if (!chat) return null
 
@@ -122,18 +130,18 @@ export async function createMessageForChat (data: {
   chat.updatedAt = new Date()
   if (data.role === 'assistant') chat.previousResponseId = data.previousResponseId
 
-  await dataStorage.setItem('chats', chats)
+  await saveChats(chats)
   return { message, previousResponseId: chat.previousResponseId }
 }
 
 export async function deleteMessagesForChat (chatId: string) {
-  const chats = await dataStorage.getItem<IChat[]>('chats') || []
+  const chats = await getChats()
   const chat = chats.find((c) => c.id === chatId)
 
   if (chat) {
     chat.messages = []
     chat.updatedAt = new Date()
-    await dataStorage.setItem('chats', chats)
+    await saveChats(chats)
   }
 }
 
