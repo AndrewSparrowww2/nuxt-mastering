@@ -1,6 +1,6 @@
 import { generateText, streamText } from 'ai'
 import { createOpenAI, openai } from '@ai-sdk/openai'
-import type { Message, LanguageModelV1, StreamTextOnFinishCallback, ToolSet, ProviderMetadata } from 'ai'
+import type { LanguageModelV1, StreamTextOnFinishCallback, ToolSet, ProviderMetadata, CreateMessage } from 'ai'
 import { prompts } from './prompt-service'
 
 interface IModelProvider {
@@ -32,7 +32,7 @@ export async function generateTextResponse (
 
 interface IStreamChatArguments {
   model: LanguageModelV1
-  messages: Message[]
+  messages: CreateMessage[]
   system?: string
   onFinish?: StreamTextOnFinishCallback<ToolSet>
   providerOptions?: ProviderMetadata

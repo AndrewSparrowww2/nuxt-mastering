@@ -1,4 +1,4 @@
-import { getProjectById } from './projectRepository'
+import { getProjectById } from './project.repository'
 const dataStorage = useStorage('data')
 
 export async function getChats () {

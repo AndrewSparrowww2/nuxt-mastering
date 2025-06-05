@@ -16,7 +16,10 @@ export default function useProjectsStore (projectId?: string) {
   })
 
   async function createProject () {
-    const project = await $fetch<IProject>('/api/projects', { method: 'POST' })
+    const project = await $fetch<IProject>('/api/projects', {
+      method: 'POST',
+      body: useMocks().generateProject()
+    })
     projects.value.unshift(project)
 
     return project

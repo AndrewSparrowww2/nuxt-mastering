@@ -1,4 +1,4 @@
-import { getProjectById } from '~~/server/repository/projectRepository'
+import { getProjectById } from '~~/server/repository/project.repository'
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)

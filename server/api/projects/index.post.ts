@@ -1,7 +1,8 @@
-import { createProject } from '~~/server/repository/projectRepository'
+import { createProject } from '~~/server/repository/project.repository'
+import { ProjectRequestSchema } from '~~/server/schemas'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
-  // body can be undefined and needs to be validated via schema
-  return createProject({ name: body?.name })
+  const { name } = await readValidatedBody(event, ProjectRequestSchema.parse)
+
+  return createProject({ name })
 })

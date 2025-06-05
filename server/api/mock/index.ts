@@ -1,5 +1,5 @@
-import { saveChats, getChats } from '~~/server/repository/chatRepository'
-import { saveProjects, getProjects } from '~~/server/repository/projectRepository'
+import { saveChats, getChats } from '~~/server/repository/chat.repository'
+import { saveProjects, getProjects } from '~~/server/repository/project.repository'
 
 export default defineEventHandler(async (_event) => {
   const chats = [useMocks().generateChat({

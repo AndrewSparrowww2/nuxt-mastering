@@ -1,11 +1,13 @@
-import type { UIMessage } from 'ai'
+import type { CreateMessage } from 'ai'
 import { streamChatResponse, createOpenAIModel } from '~~/server/services/ai-service'
-import { createMessageForChat } from '~~/server/repository/chatRepository'
+import { createMessageForChat } from '~~/server/repository/chat.repository'
+import { CreateMessageRequestSchema } from '~~/server/schemas'
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
-  const { messages }: { messages: UIMessage[] } = await readBody(event)
-  const newMessage = messages.at(-1) as UIMessage
+  const { messages } = await readValidatedBody(event, CreateMessageRequestSchema.parse)
+  const newMessage = messages.at(-1) as CreateMessage
+
   let previousResponseId
 
   // Create new user message in DB

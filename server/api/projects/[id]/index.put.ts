@@ -1,4 +1,5 @@
-import { updateProject, getProjectById } from '~~/server/repository/projectRepository'
+import { updateProject, getProjectById } from '~~/server/repository/project.repository'
+import { ProjectRequestSchema } from '~~/server/schemas'
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)
@@ -6,6 +7,6 @@ export default defineEventHandler(async (event) => {
 
   if (!project) throw createError({ statusCode: 400, statusMessage: 'Server default error.' })
 
-  const { name } = await readBody(event)
+  const { name } = await readValidatedBody(event, ProjectRequestSchema.parse)
   return updateProject(id, { name })
 })

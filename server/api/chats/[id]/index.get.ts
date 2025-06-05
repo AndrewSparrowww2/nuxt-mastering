@@ -1,4 +1,4 @@
-import { getChatById } from '~~/server/repository/chatRepository'
+import { getChatById } from '~~/server/repository/chat.repository'
 
 export default defineEventHandler(async (event) => {
   const { id } = getRouterParams(event)

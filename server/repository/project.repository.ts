@@ -1,3 +1,5 @@
+import type { TProjectRequest } from '~~/server/schemas'
+
 const dataStorage = useStorage('data')
 
 export async function getProjects () {
@@ -18,16 +20,16 @@ export async function getProjectById (id: string): Promise<IProject | null> {
   return projects.find((p) => p.id === id) || null
 }
 
-export async function createProject (data: { name?: string } = {}): Promise<IProject> {
+export async function createProject (data: TProjectRequest): Promise<IProject> {
   const projects = await getProjects()
-  const newProject = useMocks().generateProject({ ...(data.name && { name: data.name }) })
+  const newProject = useMocks().generateProject({ name: data.name })
   projects.push(newProject)
   await saveProjects(projects)
 
   return newProject
 }
 
-export async function updateProject (id: string, data: { name: string }): Promise<IProject | null> {
+export async function updateProject (id: string, data: TProjectRequest): Promise<IProject | null> {
   const projects = await getProjects()
   const projectIndex = projects.findIndex((p) => p.id === id)
   if (projectIndex === -1) return null

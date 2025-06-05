@@ -1,4 +1,4 @@
-import { getAllChats } from '~~/server/repository/chatRepository'
+import { getAllChats } from '~~/server/repository/chat.repository'
 import { cacheService } from '~~/server/services/cache-service'
 
 export default defineCachedEventHandler(async () => {
