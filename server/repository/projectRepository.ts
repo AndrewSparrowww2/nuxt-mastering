@@ -1,10 +1,10 @@
 const dataStorage = useStorage('data')
 
-async function getProjects () {
+export async function getProjects () {
   return await dataStorage.getItem<IProject[]>('projects') || []
 }
 
-async function saveProjects (projects: IProject[]) {
+export async function saveProjects (projects: IProject[]) {
   await dataStorage.setItem('projects', projects)
 }
 

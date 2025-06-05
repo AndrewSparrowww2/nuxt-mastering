@@ -1,12 +1,12 @@
 import { getProjectById } from './projectRepository'
 const dataStorage = useStorage('data')
 
-async function getChats () {
-  return await dataStorage.getItem<IChat[]>('chats') || []
+export async function getChats () {
+  return await dataStorage.getItem<IChat[]>('chats:all') || []
 }
 
-async function saveChats (chats: IChat[]) {
-  await dataStorage.setItem('chats', chats)
+export async function saveChats (chats: IChat[]) {
+  await dataStorage.setItem('chats:all', chats)
 }
 
 async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject[]> {
@@ -41,7 +41,7 @@ export async function createChat (data: { title?: string; projectId?: string } =
     ...(data.projectId && { projectId: data.projectId })
   })
   chats.unshift(newChat)
-  await dataStorage.setItem('chats', chats)
+  await saveChats(chats)
 
   // No messages yet, so lastMessage is always []
   const project = data.projectId ? await getProjectById(data.projectId) : null

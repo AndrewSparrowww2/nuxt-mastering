@@ -1,5 +1,7 @@
+import { saveChats, getChats } from '~~/server/repository/chatRepository'
+import { saveProjects, getProjects } from '~~/server/repository/projectRepository'
+
 export default defineEventHandler(async (_event) => {
-  const dataStorage = useStorage('data')
   const chats = [useMocks().generateChat({
     id: '1',
     title: 'Default chat',
@@ -8,12 +10,12 @@ export default defineEventHandler(async (_event) => {
   })]
   const projects = [useMocks().generateProject({ id: '1', name: 'Project 1' })]
 
-  await dataStorage.setItem('chats', chats)
-  await dataStorage.setItem('projects', projects)
+  await saveChats(chats)
+  await saveProjects(projects)
 
   const result = await Promise.all([
-    dataStorage.getItem('chats'),
-    dataStorage.getItem('projects')
+    getChats(),
+    getProjects()
   ])
 
   return result
