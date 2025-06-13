@@ -7,7 +7,7 @@ export default defineCachedEventHandler(async () => {
   return getAllChats()
 }, {
   name: 'getAllChats',
-  maxAge: 0,
+  maxAge: 60,
   swr: false,
   shouldInvalidateCache: () => cacheService.shouldInvalidateCache()
 })

@@ -14,7 +14,6 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     openaiApiKey: process.env.NUXT_OPENAI_API_KEY,
-    openaiProjectId: process.env.NUXT_OPENAI_PROJECT_ID,
     public: {}
   },
 
