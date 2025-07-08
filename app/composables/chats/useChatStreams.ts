@@ -1,7 +1,7 @@
 import { useChat } from '@ai-sdk/vue'
 
 export default function useChatStreams (chatId: string) {
-  const { chats, updateChat } = useChatsStore()
+  const { chats, updateChatMessages, updateChat } = useChatsStore()
   const { data: chat, execute, status: fetchStatus } = useFetch<IChat>(`/api/chats/${chatId}`, {
     immediate: false
   })
@@ -27,7 +27,21 @@ export default function useChatStreams (chatId: string) {
     append({ role: 'user', content: message })
     await nextTick()
 
-    updateChat(chatId, messages.value.map(m => ({ ...m, createdAt: m.createdAt || new Date() })))
+    updateChatMessages(chatId, messages.value.map(m => ({ ...m, createdAt: m.createdAt || new Date() })))
+  }
+
+  async function assignToProject (projectId: string) {
+    if (!chat.value) return
+
+    const originalProjectId = chat.value.projectId
+
+    try {
+      await updateChat(chatId, { projectId })
+    } catch (error) {
+      console.error('Error assigning chat to project', error)
+      // Revert optimistic update
+      chat.value.projectId = originalProjectId
+    }
   }
 
   return {
@@ -36,6 +50,7 @@ export default function useChatStreams (chatId: string) {
     messages,
     status: chatStatus,
     typing,
-    sendMessage
+    sendMessage,
+    assignToProject
   }
 }

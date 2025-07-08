@@ -1,3 +1,4 @@
+import type { TChatRequest } from '../schemas'
 import { getProjectById } from './project.repository'
 const dataStorage = useStorage('data')
 
@@ -33,7 +34,7 @@ export async function getChatsInProject (projectId: string): Promise<IChatWithPr
   return await parseChatsListResponse(chats.filter(chat => chat.projectId === projectId))
 }
 
-export async function createChat (data: { title?: string; projectId?: string } = {}): Promise<IChatWithProject | null> {
+export async function createChat (data: TChatRequest = {}): Promise<IChatWithProject | null> {
   const chats = await getChats()
 
   const newChat: IChat = useMocks().generateChat({
@@ -65,7 +66,7 @@ export async function getChatById (id: string): Promise<IChatWithProject | null>
   }
 }
 
-export async function updateChat (id: string, data: { title: string }): Promise<IChatWithProject | null> {
+export async function updateChat (id: string, data: TChatRequest = {}): Promise<IChatWithProject | null> {
   const chats = await getChats()
   const chatIndex = chats.findIndex((c) => c.id === id)
   if (chatIndex === -1) return null
@@ -75,7 +76,7 @@ export async function updateChat (id: string, data: { title: string }): Promise<
 
   const updatedChat: IChat = {
     ...chat,
-    title: data.title,
+    ...data,
     updatedAt: new Date()
   }
   chats[chatIndex] = updatedChat

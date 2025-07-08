@@ -15,10 +15,6 @@
     <NuxtLink :to="{ name: 'index' }" class="text-lg font-semibold">
       {{ appConfig.title }}
     </NuxtLink>
-
-    <NuxtLink :to="{ name: 'projects-projectId', params: { projectId: 1 } }" class="text-lg font-semibold">
-      Projects
-    </NuxtLink>
   </header>
 </template>
 

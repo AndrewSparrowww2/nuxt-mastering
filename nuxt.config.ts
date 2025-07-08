@@ -21,7 +21,13 @@ export default defineNuxtConfig({
     '~/assets/css/main.css'
   ],
 
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '~/modules/extend-routes.ts'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxtjs/mdc',
+    '~/modules/extend-routes.ts',
+    '@nuxt/image'
+  ],
 
   nitro: {
     storage: {
@@ -47,6 +53,12 @@ export default defineNuxtConfig({
         'typescript',
         'javascript'
       ]
+    }
+  },
+
+  routeRules: {
+    '/': {
+      prerender: true
     }
   }
 })

@@ -24,7 +24,7 @@ export default function useChatsStore () {
     return chat
   }
 
-  async function updateChat (id: string, messages: IChatMessage[]) {
+  async function updateChatMessages (id: string, messages: IChatMessage[]) {
     const index = chats.value.findIndex((c) => c.id === id)
     if (!chats.value[index]) return
 
@@ -42,6 +42,18 @@ export default function useChatsStore () {
     chats.value[index] = updatedChat
   }
 
+  async function updateChat (id: string, data: Partial<IChat> = {}) {
+    const index = chats.value.findIndex((c) => c.id === id)
+    if (!chats.value[index]) return
+
+    chats.value[index] = { ...chats.value[index], ...data }
+
+    await $fetch<IChat>(`/api/chats/${id}`, {
+      method: 'PUT',
+      body: data
+    })
+  }
+
   function getChatsInProject (projectId?: string) {
     return chats.value.filter((c) => c.projectId === projectId)
   }
@@ -51,6 +63,7 @@ export default function useChatsStore () {
     fetchChats,
     createChat,
     updateChat,
+    updateChatMessages,
     getChatsInProject
   }
 }

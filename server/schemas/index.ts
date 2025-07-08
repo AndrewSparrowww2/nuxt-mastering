@@ -1,6 +1,6 @@
 import { z } from 'zod/v4'
 
-export const CreateChatRequestSchema = z.object({
+export const ChatRequestSchema = z.object({
   title: z.string().min(1).optional(),
   projectId: z.string().optional()
 })
@@ -21,3 +21,5 @@ export const ProjectRequestSchema = z.object({
 })
 
 export type TProjectRequest = z.infer<typeof ProjectRequestSchema>
+export type TChatRequest = z.infer<typeof ChatRequestSchema>
+
