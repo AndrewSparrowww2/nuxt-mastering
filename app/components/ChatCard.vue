@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  chat: IChat
+  chat: TChat
   projectId?: string
 }>()
 </script>

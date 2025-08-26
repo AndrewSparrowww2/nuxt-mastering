@@ -1,6 +1,6 @@
 export default function useProjectsStore (projectId?: string) {
-  const projects = useState<IProject[]>('projects', () => [])
-  const { data, execute, status } = useFetch<IProject[]>('/api/projects', {
+  const projects = useState<TProject[]>('projects', () => [])
+  const { data, execute, status } = useFetch<TProject[]>('/api/projects', {
     immediate: false,
     default: () => []
   })
@@ -16,16 +16,16 @@ export default function useProjectsStore (projectId?: string) {
   })
 
   async function createProject () {
-    const project = await $fetch<IProject>('/api/projects', {
+    const project = await $fetch<TProject>('/api/projects', {
       method: 'POST',
-      body: useMocks().generateProject()
+      body: { name: `New project: ${crypto.randomUUID().slice(0, 2)}` }
     })
     projects.value.unshift(project)
 
     return project
   }
 
-  function updateProject (updatedProject: Pick<IProject, 'name'>) {
+  function updateProject (updatedProject: Pick<TProject, 'name'>) {
     if (!activeProject.value) return
 
     const index = projects.value.findIndex(
@@ -37,7 +37,7 @@ export default function useProjectsStore (projectId?: string) {
       ...updatedProject
     }
 
-    $fetch<IProject>(`/api/projects/${activeProject.value.id}`, {
+    $fetch<TProject>(`/api/projects/${activeProject.value.id}`, {
       method: 'PUT',
       body: updatedProject
     })

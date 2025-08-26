@@ -10,8 +10,8 @@ const { getChatsInProject, createChat } = useChatsStore()
 const { projects, createProject } = useProjectsStore()
 
 function formatProjectChat (
-  project: IProject,
-  chat: IChat
+  project: TProject,
+  chat: TChat
 ): NavigationMenuItem {
   return {
     label: chat.title || 'Untitled Chat',
@@ -23,7 +23,7 @@ function formatProjectChat (
 const chatsInCurrentProject = computed(() => getChatsInProject(route.params.projectId as string))
 
 function formatProjectItem (
-  project: IProject
+  project: TProject
 ): NavigationMenuItem {
   const isCurrent = route.params.projectId === project.id
 

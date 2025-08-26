@@ -1,62 +1,40 @@
-import type { TProjectRequest } from '~~/server/schemas'
+export async function getAllProjects (): Promise<TProject[]> {
+  console.log('hurra 2')
+  const res = await prisma.project.findMany({
+    orderBy: { createdAt: 'asc' }
+  })
 
-const dataStorage = useStorage('data')
-
-export async function getProjects () {
-  return await dataStorage.getItem<IProject[]>('projects') || []
+  console.log('hurra 3', res)
+  return res
 }
 
-export async function saveProjects (projects: IProject[]) {
-  await dataStorage.setItem('projects', projects)
+export async function getProjectById (id: string): Promise<TProject | null> {
+  return await prisma.project.findFirst({
+    where: { id }
+  })
 }
 
-export async function getAllProjects (): Promise<IProject[]> {
-  const projects = await getProjects()
-  return projects.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+export async function createProject (data: { name: string }): Promise<TProject> {
+  return await prisma.project.create({
+    data: {
+      name: data.name,
+      userId: '1'
+    }
+  })
 }
 
-export async function getProjectById (id: string): Promise<IProject | null> {
-  const projects = await getProjects()
-  return projects.find((p) => p.id === id) || null
+export async function updateProject (id: string, data: { name: string }): Promise<TProject | null> {
+  return await prisma.project.update({
+    where: { id },
+    data: {
+      name: data.name,
+      updatedAt: new Date()
+    }
+  })
 }
 
-export async function createProject (data: TProjectRequest): Promise<IProject> {
-  const projects = await getProjects()
-  const newProject = useMocks().generateProject({ name: data.name })
-  projects.push(newProject)
-  await saveProjects(projects)
-
-  return newProject
-}
-
-export async function updateProject (id: string, data: TProjectRequest): Promise<IProject | null> {
-  const projects = await getProjects()
-  const projectIndex = projects.findIndex((p) => p.id === id)
-  if (projectIndex === -1) return null
-
-  const project = projects[projectIndex]
-  if (!project) return null
-
-  const updatedProject: IProject = {
-    ...project,
-    name: data.name,
-    updatedAt: new Date()
-  }
-  projects[projectIndex] = updatedProject
-  await saveProjects(projects)
-
-  return updatedProject
-}
-
-export async function deleteProject (id: string): Promise<boolean> {
-  const projects = await getProjects()
-  const index = projects.findIndex((project) => project.id === id)
-
-  if (index !== -1) {
-    projects.splice(index, 1)
-    await saveProjects(projects)
-    return true
-  }
-
-  return false
+export async function deleteProject (id: string) {
+  return await prisma.project.delete({
+    where: { id }
+  })
 }

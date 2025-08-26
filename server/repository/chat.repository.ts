@@ -1,152 +1,100 @@
-import type { TChatRequest } from '../schemas'
-import { getProjectById } from './project.repository'
-const dataStorage = useStorage('data')
-
-export async function getChats () {
-  return await dataStorage.getItem<IChat[]>('chats:all') || []
-}
-
-export async function saveChats (chats: IChat[]) {
-  await dataStorage.setItem('chats:all', chats)
-}
-
-async function parseChatsListResponse (chats: IChat[]): Promise<IChatWithProject[]> {
-  const chatsWithProject = await Promise.all(chats.map(async (chat) => {
-    const lastMessage = getLastMessageForChat(chat)
-    const project = chat.projectId ? await getProjectById(chat.projectId) : null
-    return {
-      ...chat,
-      messages: lastMessage ? [lastMessage] : [],
-      project
+export async function getAllChats (): Promise<TChat[]> {
+  const res = await prisma.chat.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'desc' },
+        take: 1
+      }
     }
-  }))
-
-  return chatsWithProject.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-}
-
-export async function getAllChats (): Promise<IChatWithProject[]> {
-  const chats = await getChats()
-  return await parseChatsListResponse(chats)
-}
-
-export async function getChatsInProject (projectId: string): Promise<IChatWithProject[]> {
-  const chats = await getChats()
-  return await parseChatsListResponse(chats.filter(chat => chat.projectId === projectId))
-}
-
-export async function createChat (data: TChatRequest = {}): Promise<IChatWithProject | null> {
-  const chats = await getChats()
-
-  const newChat: IChat = useMocks().generateChat({
-    title: data.title || `Chat ${chats.length + 1}`,
-    ...(data.projectId && { projectId: data.projectId })
   })
-  chats.unshift(newChat)
-  await saveChats(chats)
 
-  // No messages yet, so lastMessage is always []
-  const project = data.projectId ? await getProjectById(data.projectId) : null
-  return {
-    ...newChat,
-    messages: [],
-    project
-  }
+  console.log('hurra 4', res)
+  return res
 }
 
-export async function getChatById (id: string): Promise<IChatWithProject | null> {
-  const chats = await getChats()
-  const chat = chats.find((c) => c.id === id)
-  if (!chat) return null
-
-  const project = chat.projectId ? await getProjectById(chat.projectId) : null
-  return {
-    ...chat,
-    messages: await getMessagesByChatId(id),
-    project
-  }
+export async function getChatsInProject (projectId: string): Promise<TChat[]> {
+  return await prisma.chat.findMany({
+    where: { projectId },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'desc' },
+        take: 1
+      }
+    }
+  })
 }
 
-export async function updateChat (id: string, data: TChatRequest = {}): Promise<IChatWithProject | null> {
-  const chats = await getChats()
-  const chatIndex = chats.findIndex((c) => c.id === id)
-  if (chatIndex === -1) return null
-
-  const chat = chats[chatIndex]
-  if (!chat) return null
-
-  const updatedChat: IChat = {
-    ...chat,
-    ...data,
-    updatedAt: new Date()
-  }
-  chats[chatIndex] = updatedChat
-  await saveChats(chats)
-
-  const project = updatedChat.projectId ? await getProjectById(updatedChat.projectId) : null
-  return {
-    ...updatedChat,
-    messages: await getMessagesByChatId(id),
-    project
-  }
+export async function getChatById (id: string): Promise<TChat | null> {
+  return await prisma.chat.findFirst({
+    where: { id },
+    include: {
+      messages: {
+        orderBy: { createdAt: 'asc' }
+      }
+    }
+  })
 }
 
-export async function deleteChat (id: string): Promise<boolean> {
-  const chats = await getChats()
-  const index = chats.findIndex((chat) => chat.id === id)
-
-  if (index !== -1) {
-    chats.splice(index, 1)
-    await deleteMessagesForChat(id)
-    await saveChats(chats)
-
-    return true
-  }
-  return false
+export async function getPureChatById (id: string) {
+  return await prisma.chat.findFirst({
+    where: { id }
+  })
 }
 
-export async function getMessagesByChatId (chatId: string): Promise<IChatMessage[]> {
-  const chats = await getChats()
-  const chat = chats.find((c) => c.id === chatId)
-  if (!chat) return []
+export async function createChat (data: { title: string; projectId?: string }) {
+  return await prisma.chat.create({
+    data: {
+      ...data,
+      userId: '1'
+    },
+    include: {
+      project: true,
+      messages: true
+    }
+  })
+}
 
-  return chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+export async function updateChat (id: string, data: { title?: string; projectId?: string }) {
+  return await prisma.chat.update({
+    where: { id },
+    data,
+    include: {
+      project: true,
+      messages: {
+        orderBy: { createdAt: 'asc' }
+      }
+    }
+  })
+}
+
+export async function deleteChat (id: string) {
+  return await prisma.chat.deleteMany({
+    where: { id }
+  })
 }
 
 export async function createMessageForChat (data: {
   content: string
-  role: IChatMessage['role']
+  role: TChatMessage['role']
   chatId: string
-  previousResponseId?: TJSONValue
-}): Promise<{ message: IChatMessage; previousResponseId?: TJSONValue } | null> {
-  const chats = await getChats()
-  const chat = chats.find((c) => c.id === data.chatId)
-  if (!chat) return null
-
-  const message: IChatMessage = useMocks().generateChatMessage({
-    content: data.content,
-    role: data.role
-  })
-
-  chat.messages.push(message)
-  chat.updatedAt = new Date()
-  if (data.role === 'assistant') chat.previousResponseId = data.previousResponseId
-
-  await saveChats(chats)
-  return { message, previousResponseId: chat.previousResponseId }
-}
-
-export async function deleteMessagesForChat (chatId: string) {
-  const chats = await getChats()
-  const chat = chats.find((c) => c.id === chatId)
-
-  if (chat) {
-    chat.messages = []
-    chat.updatedAt = new Date()
-    await saveChats(chats)
+  previousResponseId?: string
+}) {
+  if (data.previousResponseId) {
+    await prisma.chat.update({
+      where: { id: data.chatId },
+      data: {
+        previousResponseId: data.previousResponseId
+      }
+    })
   }
-}
 
-export function getLastMessageForChat (chat: IChat): IChatMessage | null {
-  if (!chat || chat.messages.length === 0) return null
-  return chat.messages.at(-1)!
+  return await prisma.message.create({
+    data: {
+      content: data.content,
+      role: data.role,
+      chatId: data.chatId
+    }
+  })
 }

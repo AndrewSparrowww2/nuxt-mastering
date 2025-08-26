@@ -1,6 +1,6 @@
 import type { CreateMessage } from 'ai'
 import { streamChatResponse, createOpenAIModel } from '~~/server/services/ai-service'
-import { createMessageForChat } from '~~/server/repository/chat.repository'
+import { createMessageForChat, getPureChatById } from '~~/server/repository/chat.repository'
 import { CreateMessageRequestSchema } from '~~/server/schemas'
 
 export default defineEventHandler(async (event) => {
@@ -12,8 +12,9 @@ export default defineEventHandler(async (event) => {
 
   // Create new user message in DB
   if (newMessage) {
-    const result = await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
-    previousResponseId = result?.previousResponseId
+    await createMessageForChat({ content: newMessage.content, role: newMessage.role, chatId: id })
+    const chat = await getPureChatById(id)
+    previousResponseId = chat?.previousResponseId
   }
 
   const provider = createOpenAIModel()
@@ -27,7 +28,7 @@ export default defineEventHandler(async (event) => {
         content: event.text,
         role: 'assistant',
         chatId: id,
-        previousResponseId: event.providerMetadata?.openai?.responseId
+        previousResponseId: event.providerMetadata?.openai?.responseId as string
       })
     }
   })

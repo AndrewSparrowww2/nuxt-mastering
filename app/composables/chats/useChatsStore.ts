@@ -1,6 +1,6 @@
 export default function useChatsStore () {
-  const chats = useState<IChat[]>('chats', () => [])
-  const { data, execute, status } = useFetch<IChat[]>('/api/chats', {
+  const chats = useState<TChat[]>('chats', () => [])
+  const { data, execute, status } = useFetch<TChat[]>('/api/chats', {
     default: () => [],
     immediate: false
   })
@@ -12,7 +12,7 @@ export default function useChatsStore () {
   }
 
   async function createChat ({ projectId }: { projectId?: string } = {}) {
-    const chat = await $fetch<IChat>('/api/chats', {
+    const chat = await $fetch<TChat>('/api/chats', {
       method: 'POST',
       body: {
         title: `Chat ${chats.value.length + 1}`,
@@ -24,7 +24,7 @@ export default function useChatsStore () {
     return chat
   }
 
-  async function updateChatMessages (id: string, messages: IChatMessage[]) {
+  async function updateChatMessages (id: string, messages: TChatMessage[]) {
     const index = chats.value.findIndex((c) => c.id === id)
     if (!chats.value[index]) return
 
@@ -32,7 +32,7 @@ export default function useChatsStore () {
 
     // Generate new title for chat using AI
     if (messages.length === 1) {
-      const newChat = await $fetch<IChat>(`/api/chats/${id}/title/generate`, {
+      const newChat = await $fetch<TChat>(`/api/chats/${id}/title/generate`, {
         method: 'POST',
         body: { message: messages[0]?.content }
       })
@@ -42,20 +42,20 @@ export default function useChatsStore () {
     chats.value[index] = updatedChat
   }
 
-  async function updateChat (id: string, data: Partial<IChat> = {}) {
+  async function updateChat (id: string, data: Partial<TChat> = {}) {
     const index = chats.value.findIndex((c) => c.id === id)
     if (!chats.value[index]) return
 
     chats.value[index] = { ...chats.value[index], ...data }
 
-    await $fetch<IChat>(`/api/chats/${id}`, {
+    await $fetch<TChat>(`/api/chats/${id}`, {
       method: 'PUT',
       body: data
     })
   }
 
   function getChatsInProject (projectId?: string) {
-    return chats.value.filter((c) => c.projectId === projectId)
+    return chats.value.filter((c) => projectId ? c.projectId === projectId : c.projectId === null)
   }
 
   return {

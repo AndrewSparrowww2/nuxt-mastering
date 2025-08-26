@@ -3,7 +3,7 @@ import type { UIMessage } from '@ai-sdk/vue'
 
 const props = defineProps<{
   messages: UIMessage[]
-  chat: IChat
+  chat: TChat
   typing: boolean
 }>()
 

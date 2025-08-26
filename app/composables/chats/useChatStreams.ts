@@ -2,7 +2,7 @@ import { useChat } from '@ai-sdk/vue'
 
 export default function useChatStreams (chatId: string) {
   const { chats, updateChatMessages, updateChat } = useChatsStore()
-  const { data: chat, execute, status: fetchStatus } = useFetch<IChat>(`/api/chats/${chatId}`, {
+  const { data: chat, execute, status: fetchStatus } = useFetch<TChat>(`/api/chats/${chatId}`, {
     immediate: false
   })
 
@@ -27,7 +27,12 @@ export default function useChatStreams (chatId: string) {
     append({ role: 'user', content: message })
     await nextTick()
 
-    updateChatMessages(chatId, messages.value.map(m => ({ ...m, createdAt: m.createdAt || new Date() })))
+    updateChatMessages(chatId, messages.value.map(m => ({
+      ...m,
+      chatId,
+      createdAt: m.createdAt || new Date(),
+      updatedAt: m.createdAt || new Date()
+    })))
   }
 
   async function assignToProject (projectId: string) {
