@@ -179,11 +179,4 @@ async function handleNewChat () {
   width: auto;
   min-width: 200px;
 }
-
-.no-chats,
-.loading {
-  text-align: center;
-  padding: 3rem 0;
-  color: var(--ui-text-muted);
-}
 </style>

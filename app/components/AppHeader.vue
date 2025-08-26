@@ -15,6 +15,10 @@
     <NuxtLink :to="{ name: 'index' }" class="text-lg font-semibold">
       {{ appConfig.title }}
     </NuxtLink>
+
+    <NuxtLink :to="{ name: 'chats' }" class="text-lg font-semibold">
+      Your Chats
+    </NuxtLink>
   </header>
 </template>
 
