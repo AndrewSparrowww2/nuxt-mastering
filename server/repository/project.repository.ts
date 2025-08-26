@@ -1,10 +1,8 @@
 export async function getAllProjects (): Promise<TProject[]> {
-  console.log('hurra 2')
   const res = await prisma.project.findMany({
     orderBy: { createdAt: 'asc' }
   })
 
-  console.log('hurra 3', res)
   return res
 }
 

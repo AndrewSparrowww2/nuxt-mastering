@@ -9,7 +9,6 @@ export async function getAllChats (): Promise<TChat[]> {
     }
   })
 
-  console.log('hurra 4', res)
   return res
 }
 
