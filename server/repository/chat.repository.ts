@@ -1,5 +1,6 @@
 export async function getAllChats (): Promise<TChat[]> {
   const res = await prisma.chat.findMany({
+    where: { userId: useEvent().context.userId },
     orderBy: { createdAt: 'desc' },
     include: {
       messages: {
@@ -14,7 +15,7 @@ export async function getAllChats (): Promise<TChat[]> {
 
 export async function getChatsInProject (projectId: string): Promise<TChat[]> {
   return await prisma.chat.findMany({
-    where: { projectId },
+    where: { projectId, userId: useEvent().context.userId },
     orderBy: { createdAt: 'desc' },
     include: {
       messages: {
@@ -27,7 +28,7 @@ export async function getChatsInProject (projectId: string): Promise<TChat[]> {
 
 export async function getChatById (id: string): Promise<TChat | null> {
   return await prisma.chat.findFirst({
-    where: { id },
+    where: { id, userId: useEvent().context.userId },
     include: {
       messages: {
         orderBy: { createdAt: 'asc' }
@@ -38,7 +39,7 @@ export async function getChatById (id: string): Promise<TChat | null> {
 
 export async function getPureChatById (id: string) {
   return await prisma.chat.findFirst({
-    where: { id }
+    where: { id, userId: useEvent().context.userId }
   })
 }
 
@@ -46,7 +47,7 @@ export async function createChat (data: { title: string; projectId?: string }) {
   return await prisma.chat.create({
     data: {
       ...data,
-      userId: '1'
+      userId: useEvent().context.userId
     },
     include: {
       project: true,
@@ -57,7 +58,7 @@ export async function createChat (data: { title: string; projectId?: string }) {
 
 export async function updateChat (id: string, data: { title?: string; projectId?: string }) {
   return await prisma.chat.update({
-    where: { id },
+    where: { id, userId: useEvent().context.userId },
     data,
     include: {
       project: true,
@@ -70,7 +71,7 @@ export async function updateChat (id: string, data: { title?: string; projectId?
 
 export async function deleteChat (id: string) {
   return await prisma.chat.deleteMany({
-    where: { id }
+    where: { id, userId: useEvent().context.userId }
   })
 }
 
@@ -82,7 +83,7 @@ export async function createMessageForChat (data: {
 }) {
   if (data.previousResponseId) {
     await prisma.chat.update({
-      where: { id: data.chatId },
+      where: { id: data.chatId, userId: useEvent().context.userId },
       data: {
         previousResponseId: data.previousResponseId
       }

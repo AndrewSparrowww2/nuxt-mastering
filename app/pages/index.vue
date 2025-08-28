@@ -36,6 +36,8 @@ function handleCreateChat () {
           src="/hero.png"
           alt="Chat Interface Preview"
           class="hero-img"
+          width="300"
+          densities="x1"
         />
       </div>
     </UContainer>
@@ -212,7 +214,7 @@ function handleCreateChat () {
 
 .hero-img {
   width: 100%;
-  max-width: 600px;
+  max-width: 450px;
   height: auto;
   border-radius: 1rem;
 }

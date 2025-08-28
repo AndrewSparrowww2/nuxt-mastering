@@ -1,5 +1,5 @@
 <template>
-  <header class="app-header">
+  <header class="app-header justify-between">
     <div class="header-left">
       <UButton
         icon="i-lucide-menu"
@@ -16,9 +16,12 @@
       {{ appConfig.title }}
     </NuxtLink>
 
-    <NuxtLink :to="{ name: 'chats' }" class="text-lg font-semibold">
-      Your Chats
-    </NuxtLink>
+    <div class="flex items-center">
+      <NuxtLink :to="{ name: 'chats' }" class="text-lg font-semibold">
+        Your Chats
+      </NuxtLink>
+      <ProfileMenu class="ml-3" />
+    </div>
   </header>
 </template>
 

@@ -8,6 +8,10 @@ export default defineNuxtConfig({
     compatibilityVersion: 4
   },
 
+  experimental: {
+    asyncContext: true
+  },
+
   imports: {
     dirs: ['composables/**']
   },
@@ -26,7 +30,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxtjs/mdc',
     '~/modules/extend-routes.ts',
-    '@nuxt/image'
+    '@nuxt/image',
+    'nuxt-auth-utils'
   ],
 
   nitro: {
@@ -59,6 +64,10 @@ export default defineNuxtConfig({
   routeRules: {
     '/': {
       prerender: true
+    },
+    '/.well-known/**': {
+      headers: { 'Cache-Control': 'max-age=31536000' },
+      prerender: false
     }
   }
 })
