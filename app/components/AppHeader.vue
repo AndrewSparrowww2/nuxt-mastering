@@ -7,7 +7,7 @@
         variant="soft"
         @click="$emit('toggle-sidebar')"
       />
-      <UButton icon="i-lucide-plus" to="/new-chat">
+      <UButton icon="i-lucide-plus" to="/chats/new-chat">
         New Chat
       </UButton>
     </div>

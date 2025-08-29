@@ -107,7 +107,7 @@ async function handleCreateProject () {
         variant="soft"
         icon="i-heroicons-plus-small"
         class="mt-2 w-full"
-        to="/new-chat"
+        to="/chats/new-chat"
       >
         New Chat
       </UButton>

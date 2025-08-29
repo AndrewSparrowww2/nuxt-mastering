@@ -33,7 +33,7 @@
 const { getChatsInProject } = useChatsStore()
 
 function handleCreateChat () {
-  navigateTo('/new-chat')
+  navigateTo('/chats/new-chat')
 }
 
 const chats = computed(() => getChatsInProject())

@@ -10,7 +10,7 @@ useHead({
 
 const { isAuthenticated } = useAuth()
 if (isAuthenticated.value) {
-  await navigateTo('/', { replace: true })
+  await navigateTo('/chats', { replace: true })
 }
 
 const isLoading = ref(false)

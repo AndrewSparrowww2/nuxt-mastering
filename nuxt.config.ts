@@ -68,6 +68,10 @@ export default defineNuxtConfig({
     '/.well-known/**': {
       headers: { 'Cache-Control': 'max-age=31536000' },
       prerender: false
+    },
+    '/.well-known/appspecific/**': {
+      headers: { 'Content-Type': 'application/json' },
+      prerender: false
     }
   }
 })

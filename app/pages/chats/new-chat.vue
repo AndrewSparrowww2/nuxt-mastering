@@ -5,6 +5,11 @@ definePageMeta({
     async function (_to, _from) {
       const projectId = _to.query.projectId as string | undefined
       const { createChat } = useChatsStore()
+      const { isAuthenticated } = useAuth()
+
+      if (!isAuthenticated.value) {
+        return navigateTo('/login')
+      }
 
       const chat = await createChat({ projectId })
 

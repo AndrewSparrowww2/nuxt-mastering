@@ -5,7 +5,7 @@ definePageMeta({
 
 const appConfig = useAppConfig()
 function handleCreateChat () {
-  navigateTo('/new-chat')
+  navigateTo('/chats/new-chat')
 }
 </script>
 
